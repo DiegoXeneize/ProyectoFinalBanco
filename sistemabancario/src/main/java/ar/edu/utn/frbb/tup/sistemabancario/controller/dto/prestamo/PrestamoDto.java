@@ -1,4 +1,4 @@
-package ar.edu.utn.frbb.tup.sistemabancario.controller.dto;
+package ar.edu.utn.frbb.tup.sistemabancario.controller.dto.prestamo;
 
 public class PrestamoDto {
     private long numeroCliente;

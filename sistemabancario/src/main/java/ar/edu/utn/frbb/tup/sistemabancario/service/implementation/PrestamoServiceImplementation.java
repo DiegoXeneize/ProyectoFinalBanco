@@ -23,26 +23,107 @@ public class PrestamoServiceImplementation implements PrestamoService {
     private ImplementsPrestamoDao prestamoDao;
 
     @Override
-    public Prestamo solicitarPrestamo(PrestamoDto prestamoDto) throws ClienteNoExistsException, CuentaNoEncontradaException {
-        Cliente cliente = clienteService.buscarClientePorDni(prestamoDto.getNumeroCliente());
-        Cuenta cuenta = cuentaService.obtenerCuentaParaPrestamo(cliente.getDni(), TipoMoneda.fromString(prestamoDto.getMoneda()));
-
-        if (cuenta == null) {
-            throw new CuentaNoEncontradaException("El cliente no tiene una cuenta en la moneda especificada.");
+    public PrestamoResponseDto procesarSolicitudPrestamo(PrestamoDto prestamoDto) throws ClienteAlreadyExistsException, CuentaAlreadyExistsException {
+        Prestamo prestamo = new Prestamo(prestamoDto);
+        PrestamoResponseDto response = new PrestamoResponseDto();
+    
+        if (!cuentaDao.existeCuenta(prestamo.getNumeroCliente(), prestamo.getMoneda())) {
+            throw new CuentaAlreadyExistsException("El cliente no tiene una cuenta en la moneda especificada.");
         }
+    
+        if (!clienteDao.existeCliente(prestamoDto.getNumeroCliente())) {
+            throw new ClienteAlreadyExistsException("El cliente no existe.");
+        }
+    
+        ScoreCrediticioService scoreService = new ScoreCrediticioService();
+        boolean scoreAprobado = scoreService.validarScore(prestamoDto);
+    
+        if (!scoreAprobado) {
+            prestamo.setEstado("Rechazado");
+            prestamoDao.guardar(prestamo);
+    
+            response.setEstado("Rechazado");
+            response.setMensaje("El cliente no tiene un score crediticio suficiente para solicitar el préstamo.");
+            return response;
+        }
+    
+        double tasaInteresAnual = 0.05;
+        double intereses = (prestamo.getPlazo() / 12) * tasaInteresAnual * prestamo.getMonto();
+        double montoTotal = prestamo.getMonto() + intereses;
+        double montoCuota = montoTotal / prestamo.getPlazo();
+    
+        prestamo.setEstado("Aprobado");
+        prestamo.setInteres(intereses);
+        prestamo.setMontoCuota(montoCuota);
+        prestamoDao.guardar(prestamo);
 
-        Prestamo prestamo = new Prestamo(cliente, prestamoDto.getMontoPrestamo(), cuenta.getTipoMoneda(), prestamoDto.getPlazoMeses());
-        prestamoDao.save(prestamo);
+        cuentaService.depositar(prestamo.getNumeroCliente(), prestamo.getMoneda(), prestamo.getMonto());
+    
+        List<PlanPagoDto> planPagos = generarPlanDePagos(prestamo.getPlazo(), montoCuota);
 
-        cuenta.setSaldo(cuenta.getSaldo() + prestamoDto.getMontoPrestamo());
-
-        return prestamo;
+        response.setEstado("Aprobado");
+        response.setMensaje("El monto del préstamo fue acreditado en su cuenta.");
+        response.setPlanPagos(planPagos);
+    
+        return response;
     }
-
+    
+    private List<PlanPagoDto> generarPlanDePagos(int plazo, double montoCuota) {
+        List<PlanPagoDto> planPagos = new ArrayList<>();
+        for (int i = 1; i <= plazo; i++) {
+            planPagos.add(new PlanPagoDto(i, montoCuota));
+        }
+        return planPagos;
+    }
+    
+    
     @Override
-    public List<Prestamo> listPrestamosByCliente(long dniTitular) {
-        return List.of();
+    public PrestamosClienteResponseDto obtenerPrestamosDeCliente(long numeroCliente) throws ClienteAlreadyExistsException {
+        // Validar existencia del cliente
+        validarClienteExistente(numeroCliente);
+    
+        // Obtener préstamos del cliente
+        List<Prestamo> prestamosCliente = prestamoDao.buscarPrestamosPorCliente(numeroCliente);
+    
+        // Mapear los préstamos a DTO
+        List<ConsultaPrestamoDto> prestamosDto = prestamosCliente.stream()
+                .map(this::convertirAPrestamoDto)
+                .toList();
+    
+        // Crear respuesta
+        return construirRespuestaPrestamos(numeroCliente, prestamosDto);
     }
+    
+    private void validarClienteExistente(long numeroCliente) throws ClienteAlreadyExistsException {
+        if (clienteDao.find(numeroCliente) == null) {
+            throw new ClienteAlreadyExistsException("El cliente con número " + numeroCliente + " no existe.");
+        }
+    }
+    
+    private ConsultaPrestamoDto convertirAPrestamoDto(Prestamo prestamo) {
+        double saldoRestante = calcularSaldoRestante(prestamo);
+        return new ConsultaPrestamoDto(
+                prestamo.getId(),
+                prestamo.getMoneda(),
+                prestamo.getMonto(),
+                prestamo.getPlazoMeses(),
+                prestamo.getPagosRealizados(),
+                saldoRestante
+        );
+    }
+    
+    private double calcularSaldoRestante(Prestamo prestamo) {
+        double pagosRealizados = prestamo.getPagosRealizados() * prestamo.getMontoCuota();
+        return prestamo.getMonto() - pagosRealizados;
+    }
+    
+    private PrestamosClienteResponseDto construirRespuestaPrestamos(long numeroCliente, List<ConsultaPrestamoDto> prestamosDto) {
+        PrestamosClienteResponseDto response = new PrestamosClienteResponseDto();
+        response.setNumeroCliente(numeroCliente);
+        response.setConsultaPrestamos(prestamosDto);
+        return response;
+    }
+    
 
 
 }

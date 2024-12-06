@@ -34,7 +34,6 @@ public class CuentaController {
     public List<Cuenta> allCuentasByCliente(@PathVariable long dniTitular) throws CuentaNoEncontradaException {
         validationInput.validarDni(dniTitular);
         return cuentaService.listCuentasByCliente(dniTitular);
-
     }
 
     @GetMapping("/{nroCuenta}")

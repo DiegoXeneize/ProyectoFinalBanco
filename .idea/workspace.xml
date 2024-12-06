@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e7fb3e39-3712-47b6-8e11-fa3af9ed5a48" name="Changes" comment="" />
+    <list default="true" id="e7fb3e39-3712-47b6-8e11-fa3af9ed5a48" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/controller/CuentaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/controller/CuentaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/controller/PrestamoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/controller/PrestamoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/model/Prestamo.java" beforeDir="false" afterPath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/model/Prestamo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/service/PrestamoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/service/PrestamoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/service/implementation/PrestamoServiceImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/sistemabancario/src/main/java/ar/edu/utn/frbb/tup/sistemabancario/service/implementation/PrestamoServiceImplementation.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,6 +26,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -29,6 +39,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.SistemasBancariosApplication.executor": "Run",
+    "Application.java.executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -36,9 +48,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.SistemabancarioApplication.executor": "Run",
     "Spring Boot.SistemasBancariosApplication.executor": "Run",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Universidad/SistemaBancario-Bruno/sistemabancario",
+    "last_opened_file_path": "D:/Universidad/RepoSistemaBanco/ProyectoFinalBanco",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -59,6 +72,7 @@
   <component name="RunManager" selected="Application.SistemasBancariosApplication">
     <configuration name="SistemasBancariosApplication" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="ar.edu.utn.frbb.tup.sistemabancario.SistemasBancariosApplication" />
+      <module name="ProyectoFinalBanco" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="ar.edu.utn.frbb.tup.sistemabancario.*" />
@@ -120,7 +134,9 @@
       <method v="2" />
     </configuration>
     <configuration name="SistemasBancariosApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <module name="sistemabancario" />
+      <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../Programas/Jdk" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <module name="ProyectoFinalBanco" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="ar.edu.utn.frbb.tup.sistemabancario.SistemasBancariosApplication" />
       <extension name="coverage">
         <pattern>
@@ -179,6 +195,10 @@
       <option name="docutils_open_in_browser" value="false" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Application.SistemasBancariosApplication" />
+      <item itemvalue="Spring Boot.SistemasBancariosApplication" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.SistemasBancariosApplication" />
@@ -218,10 +238,16 @@
       <workItem from="1730161178681" duration="62000" />
       <workItem from="1731780318040" duration="159000" />
       <workItem from="1731780506268" duration="147000" />
+      <workItem from="1733521957001" duration="253000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ProyectoFinalBanco$SistemasBancariosApplication.ic" NAME="SistemasBancariosApplication Coverage Results" MODIFIED="1733522047742" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>ar.edu.utn.frbb.tup.sistemabancario.*</FILTER>
+    </SUITE>
   </component>
 </project>

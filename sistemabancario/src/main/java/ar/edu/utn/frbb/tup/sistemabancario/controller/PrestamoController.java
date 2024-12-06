@@ -29,4 +29,15 @@ public class PrestamoController {
         }
     }
 
+    @GetMapping("/{ClienteId}")
+    public PrestamosClienteResponseDto ConsultaPrestamo(@PathVariable long ClienteId){
+        return prestamoService.consultarPrestamo(ClienteId);
+    } 
+
+    @PutMapping("/pagar")
+    public PrestamoResponseDto DebitarCuota(@RequestBody PagoCuotaPrestamoDto pagoCuotaPrestamoDto){
+        cuotaPrestamoValidator.validate(pagoCuotaPrestamoDto);
+        return prestamoService.pagarCuota(pagoCuotaPrestamoDto);
+    }
+    
 }

@@ -8,9 +8,12 @@ public class Prestamo {
     private double monto;
     private TipoMoneda moneda;
     private int plazoMeses;
-    private double interesAnual = 0.05; // 5% anual
+    private double interesAnual;
+    private double interes;
+    private double montoCuota;
     private double saldoRestante;
     private LocalDate fechaCreacion;
+    private String estado;
 
     public Prestamo() {
         this.fechaCreacion = LocalDate.now();
@@ -22,10 +25,11 @@ public class Prestamo {
         this.monto = monto;
         this.moneda = moneda;
         this.plazoMeses = plazoMeses;
-        this.saldoRestante = monto;
+        this.saldoRestante = monto; 
+        this.interesAnual = 0.05;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -73,6 +77,22 @@ public class Prestamo {
         this.interesAnual = interesAnual;
     }
 
+    public double getInteres() {
+        return interes;
+    }
+
+    public void setInteres(double interes) {
+        this.interes = interes;
+    }
+
+    public double getMontoCuota() {
+        return montoCuota;
+    }
+
+    public void setMontoCuota(double montoCuota) {
+        this.montoCuota = montoCuota;
+    }
+
     public double getSaldoRestante() {
         return saldoRestante;
     }
@@ -87,5 +107,13 @@ public class Prestamo {
 
     public void setFechaCreacion(LocalDate fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

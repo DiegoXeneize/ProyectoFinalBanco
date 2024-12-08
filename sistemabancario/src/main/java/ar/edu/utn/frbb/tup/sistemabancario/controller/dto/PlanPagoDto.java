@@ -1,4 +1,4 @@
-package ar.edu.utn.frbb.tup.sistemabancario.controller.dto.prestamo;
+package ar.edu.utn.frbb.tup.sistemabancario.controller.dto;
 
 public class PlanPagoDto {
     private int cuotaNro;
@@ -12,16 +12,15 @@ public class PlanPagoDto {
     public int getCuotaNro() {
         return cuotaNro;
     }
-
     public void setCuotaNro(int cuotaNro) {
         this.cuotaNro = cuotaNro;
     }
-
     public double getMonto() {
         return monto;
     }
-
     public void setMonto(double monto) {
         this.monto = monto;
     }
+
+    
 }

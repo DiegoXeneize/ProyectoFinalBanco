@@ -1,48 +1,43 @@
 package ar.edu.utn.frbb.tup.sistemabancario.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Prestamo {
-    private int id;
-    private Cliente cliente;
+
+    private long id;
+    private long numeroCliente;
     private double monto;
-    private TipoMoneda moneda;
+    private String moneda;
     private int plazoMeses;
-    private double interesAnual;
     private double interes;
     private double montoCuota;
+    private int pagosRealizados;
     private double saldoRestante;
-    private LocalDate fechaCreacion;
-    private String estado;
+    private LocalDate fechaAltaPrestamo;
+    private List<Cuota> planPagos;
 
+    // Constructor vacío
     public Prestamo() {
-        this.fechaCreacion = LocalDate.now();
+        this.planPagos = new ArrayList<>();
     }
 
-    public Prestamo(Cliente cliente, double monto, TipoMoneda moneda, int plazoMeses) {
-        this();
-        this.cliente = cliente;
-        this.monto = monto;
-        this.moneda = moneda;
-        this.plazoMeses = plazoMeses;
-        this.saldoRestante = monto; 
-        this.interesAnual = 0.05;
-    }
-
-    public int getId() {
+    // Getters y Setters
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public long getNumeroCliente() {
+        return numeroCliente;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setNumeroCliente(long numeroCliente) {
+        this.numeroCliente = numeroCliente;
     }
 
     public double getMonto() {
@@ -53,11 +48,11 @@ public class Prestamo {
         this.monto = monto;
     }
 
-    public TipoMoneda getMoneda() {
+    public String getMoneda() {
         return moneda;
     }
 
-    public void setMoneda(TipoMoneda moneda) {
+    public void setMoneda(String moneda) {
         this.moneda = moneda;
     }
 
@@ -67,14 +62,6 @@ public class Prestamo {
 
     public void setPlazoMeses(int plazoMeses) {
         this.plazoMeses = plazoMeses;
-    }
-
-    public double getInteresAnual() {
-        return interesAnual;
-    }
-
-    public void setInteresAnual(double interesAnual) {
-        this.interesAnual = interesAnual;
     }
 
     public double getInteres() {
@@ -93,6 +80,14 @@ public class Prestamo {
         this.montoCuota = montoCuota;
     }
 
+    public int getPagosRealizados() {
+        return pagosRealizados;
+    }
+
+    public void setPagosRealizados(int pagosRealizados) {
+        this.pagosRealizados = pagosRealizados;
+    }
+
     public double getSaldoRestante() {
         return saldoRestante;
     }
@@ -101,19 +96,19 @@ public class Prestamo {
         this.saldoRestante = saldoRestante;
     }
 
-    public LocalDate getFechaCreacion() {
-        return fechaCreacion;
+    public LocalDate getFechaAltaPrestamo() {
+        return fechaAltaPrestamo;
     }
 
-    public void setFechaCreacion(LocalDate fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setFechaAltaPrestamo(LocalDate fechaAltaPrestamo) {
+        this.fechaAltaPrestamo = fechaAltaPrestamo;
     }
 
-    public String getEstado() {
-        return estado;
+    public List<Cuota> getPlanPagos() {
+        return planPagos;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setPlanPagos(List<Cuota> planPagos) {
+        this.planPagos = planPagos;
     }
 }

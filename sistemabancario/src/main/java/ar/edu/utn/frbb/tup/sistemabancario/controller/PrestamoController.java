@@ -1,8 +1,13 @@
 package ar.edu.utn.frbb.tup.sistemabancario.controller;
 
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamoDto;
+import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamoResponseDto;
+import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamosClienteResponseDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.validations.ValidationInput;
 import ar.edu.utn.frbb.tup.sistemabancario.model.Prestamo;
+import ar.edu.utn.frbb.tup.sistemabancario.model.exception.ClienteNoExistsException;
+import ar.edu.utn.frbb.tup.sistemabancario.model.exception.CuentaNoEncontradaException;
+import ar.edu.utn.frbb.tup.sistemabancario.model.exception.PrestamoException;
 import ar.edu.utn.frbb.tup.sistemabancario.service.PrestamoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,24 +25,13 @@ public class PrestamoController {
     ValidationInput validationInput;
 
     @PostMapping
-    public ResponseEntity<Object> solicitarPrestamo(@RequestBody PrestamoDto prestamoDto) {
-        try {
-            Prestamo prestamo = prestamoService.solicitarPrestamo(prestamoDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(prestamo);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<PrestamoResponseDto> solicitarPrestamo(@RequestBody PrestamoDto prestamoDto) throws ClienteNoExistsException, CuentaNoEncontradaException, PrestamoException {
+        return ResponseEntity.ok(prestamoService.solicitarPrestamo(prestamoDto));
     }
 
-    @GetMapping("/{ClienteId}")
-    public PrestamosClienteResponseDto ConsultaPrestamo(@PathVariable long ClienteId){
-        return prestamoService.consultarPrestamo(ClienteId);
-    } 
-
-    @PutMapping("/pagar")
-    public PrestamoResponseDto DebitarCuota(@RequestBody PagoCuotaPrestamoDto pagoCuotaPrestamoDto){
-        cuotaPrestamoValidator.validate(pagoCuotaPrestamoDto);
-        return prestamoService.pagarCuota(pagoCuotaPrestamoDto);
+    @GetMapping("/{numeroCliente}")
+    public ResponseEntity<PrestamosClienteResponseDto> obtenerPrestamos(@PathVariable long numeroCliente) {
+        validationInput.validarDni(numeroCliente);
+        return ResponseEntity.ok(prestamoService.obtenerPrestamosDeCliente(numeroCliente));
     }
-    
 }

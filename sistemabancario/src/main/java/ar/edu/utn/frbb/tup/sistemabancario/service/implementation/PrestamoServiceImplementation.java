@@ -4,6 +4,8 @@ import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamoDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamoResponseDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamosClienteResponseDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.ConsultaPrestamoDto;
+import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PagoCuotaDto;
+import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PagoCuotaResponseDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PlanPagoDto;
 import ar.edu.utn.frbb.tup.sistemabancario.model.*;
 import ar.edu.utn.frbb.tup.sistemabancario.model.exception.*;
@@ -30,30 +32,31 @@ public class PrestamoServiceImplementation implements PrestamoService {
     @Autowired
     private CuentaService cuentaService;
 
+    private static long prestamoIdCounter = 1;
+
+    private long generateUniquePrestamoId() {
+        return prestamoIdCounter++;
+    }
+
     @Override
     public PrestamoResponseDto solicitarPrestamo(PrestamoDto prestamoDto) throws ClienteNoExistsException, CuentaNoEncontradaException, PrestamoException {
-        // Validar si el cliente existe
+
         Cliente cliente = clienteService.buscarClientePorDni(prestamoDto.getNumeroCliente());
         if (cliente == null) {
             throw new ClienteNoExistsException("El cliente con ID " + prestamoDto.getNumeroCliente() + " no existe.");
         }
 
-        // Verificar si el cliente tiene una cuenta en la moneda especificada
         Cuenta cuenta = cuentaService.obtenerCuentaParaPrestamo(prestamoDto.getNumeroCliente(), TipoMoneda.valueOf(prestamoDto.getMoneda().toUpperCase()));
         if (cuenta == null) {
             throw new CuentaNoEncontradaException("El cliente no tiene una cuenta en la moneda especificada.");
         }
 
-        if (cuenta.getSaldo() < prestamoDto.getMontoPrestamo()) {
-            throw new PrestamoException("El cliente no tiene suficiente saldo en su cuenta para solicitar el préstamo.");
+        if (prestamoDto.getPlazoMeses() < 1) {
+            throw new PrestamoException("El plazo debe ser mayor a 0.");
         }
 
-        if(prestamoDto.getPlazoMeses() < 1) {
-            throw new PrestamoException("El plazo debe ser entre 1 y 12 meses.");
-        }
-
-        // Crear y configurar el préstamo
         Prestamo prestamo = new Prestamo();
+        prestamo.setId(generateUniquePrestamoId());
         prestamo.setNumeroCliente(prestamoDto.getNumeroCliente());
         prestamo.setMonto(prestamoDto.getMontoPrestamo());
         prestamo.setMoneda(prestamoDto.getMoneda());
@@ -75,7 +78,7 @@ public class PrestamoServiceImplementation implements PrestamoService {
         return response;
     }
 
-    @Override
+        @Override
     public PrestamosClienteResponseDto obtenerPrestamosDeCliente(long numeroCliente) throws ClienteNoExistsException {
 
         Cliente cliente = clienteService.buscarClientePorDni(numeroCliente);
@@ -83,16 +86,15 @@ public class PrestamoServiceImplementation implements PrestamoService {
             throw new ClienteNoExistsException("El cliente con ID " + numeroCliente + " no existe.");
         }
 
-        // Obtener los préstamos del cliente
         List<Prestamo> prestamos = prestamoDao.findAllByCliente(numeroCliente);
 
-        // Crear respuesta
         PrestamosClienteResponseDto response = new PrestamosClienteResponseDto();
         response.setNumeroCliente(numeroCliente);
 
         List<ConsultaPrestamoDto> prestamosDto = new ArrayList<>();
         for (Prestamo prestamo : prestamos) {
             ConsultaPrestamoDto dto = new ConsultaPrestamoDto();
+            dto.setIdPrestamo(prestamo.getId());
             dto.setMonto(prestamo.getMonto());
             dto.setPlazoMeses(prestamo.getPlazoMeses());
             dto.setPagosRealizados(prestamo.getPagosRealizados());
@@ -105,8 +107,42 @@ public class PrestamoServiceImplementation implements PrestamoService {
     }
 
 
+    @Override
+    public PagoCuotaResponseDto ejecutarPagoDeCuota(PagoCuotaDto pagoCuotaDto) throws PrestamoNoEncontradoException {
+
+        Prestamo prestamo = prestamoDao.find(pagoCuotaDto.getNumeroPrestamo());
+        if (prestamo == null) {
+            throw new PrestamoNoEncontradoException("El préstamo con número " + pagoCuotaDto.getNumeroPrestamo() + " no existe.");
+        }
+
+        int cuotasRestantes = prestamo.getPlazoMeses() - prestamo.getPagosRealizados();
+        if (pagoCuotaDto.getCantidadCuotas() > cuotasRestantes) {
+            throw new IllegalArgumentException("El número de cuotas excede las cuotas restantes del préstamo.");
+        }
+
+        double montoPorCuota = prestamo.getMontoCuota();
+        double montoTotalPago = montoPorCuota * pagoCuotaDto.getCantidadCuotas();
+
+        if (pagoCuotaDto.getMontoPago() < montoTotalPago) {
+            throw new IllegalArgumentException("El monto proporcionado no es suficiente para pagar las cuotas seleccionadas. Monto requerido: " + montoTotalPago);
+        }
+
+        prestamo.setPagosRealizados(prestamo.getPagosRealizados() + pagoCuotaDto.getCantidadCuotas());
+        prestamo.setSaldoRestante(prestamo.getSaldoRestante() - montoTotalPago);
+        prestamoDao.save(prestamo);
+        
+        PagoCuotaResponseDto response = new PagoCuotaResponseDto();
+        response.setNumeroPrestamo(prestamo.getId());
+        response.setEstado("COMPLETADO");
+        response.setMensaje("El pago de " + pagoCuotaDto.getCantidadCuotas() + " cuota(s) fue registrado exitosamente.");
+
+        return response;
+    }
+
+
+
     private double calcularIntereses(double monto, int plazoMeses) {
-        double tasaAnual = 0.05; // 5% anual
+        double tasaAnual = 0.05; 
         return (monto * tasaAnual * plazoMeses) / 12;
     }
 

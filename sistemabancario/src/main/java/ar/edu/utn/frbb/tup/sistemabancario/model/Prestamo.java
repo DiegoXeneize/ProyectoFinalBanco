@@ -18,12 +18,10 @@ public class Prestamo {
     private LocalDate fechaAltaPrestamo;
     private List<Cuota> planPagos;
 
-    // Constructor vacío
     public Prestamo() {
         this.planPagos = new ArrayList<>();
     }
 
-    // Getters y Setters
     public long getId() {
         return id;
     }

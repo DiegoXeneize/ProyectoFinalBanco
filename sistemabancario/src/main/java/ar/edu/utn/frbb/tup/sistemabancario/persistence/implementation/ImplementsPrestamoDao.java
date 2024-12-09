@@ -21,6 +21,10 @@ public class ImplementsPrestamoDao extends AbstractDataBase implements PrestamoD
         getInMemoryDataBase().put(prestamo.getId(), prestamo);
     }
 
+    public Prestamo find(long id) {
+        return (Prestamo) getInMemoryDataBase().get(id);
+    }
+
     @Override
     public List<Prestamo> findAllByCliente(long numeroCliente) {
         List<Prestamo> prestamosCliente = new ArrayList<>();

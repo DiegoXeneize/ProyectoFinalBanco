@@ -1,11 +1,18 @@
 package ar.edu.utn.frbb.tup.sistemabancario.controller.dto;
 
 public class ConsultaPrestamoDto {
+    private long idPrestamo;
     private double monto;
     private int plazoMeses;
     private int pagosRealizados;
     private double saldoRestante;
     
+    public long getIdPrestamo() {
+        return idPrestamo;
+    }
+    public void setIdPrestamo(long idPrestamo) {
+        this.idPrestamo = idPrestamo;
+    }
     public double getMonto() {
         return monto;
     }

@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.sistemabancario.controller;
 
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.CuentaDto;
+import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.DepositoDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.validations.ValidationInput;
 import ar.edu.utn.frbb.tup.sistemabancario.model.Cuenta;
 import ar.edu.utn.frbb.tup.sistemabancario.model.exception.*;
@@ -14,7 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cuenta")
+@RequestMapping("/api/cuenta")
 public class CuentaController {
 
     @Autowired
@@ -36,9 +37,9 @@ public class CuentaController {
         return cuentaService.listCuentasByCliente(dniTitular);
     }
 
-    @GetMapping("/{nroCuenta}")
-    public Cuenta buscarCuentaPorNumero(@PathVariable long nroCuenta) throws CuentaNoEncontradaException {
-        validationInput.validarNumeroCuenta(nroCuenta);
-        return cuentaService.buscarCuentaPorNumero(nroCuenta);
-    }
+    @PostMapping("/depositar")
+    public ResponseEntity<Object> depositarDinero(@RequestBody DepositoDto depositoDto) throws CuentaNoEncontradaException {
+        double saldoActual = cuentaService.depositar(depositoDto.getNumeroCuenta(), depositoDto.getMonto());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Depósito realizado con éxito. Saldo actual: " + saldoActual);
+}
 }

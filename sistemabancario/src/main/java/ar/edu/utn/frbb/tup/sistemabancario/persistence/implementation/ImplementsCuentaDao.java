@@ -62,6 +62,15 @@ public class ImplementsCuentaDao extends AbstractDataBase implements CuentaDao {
         return cuentasCliente;
     }
 
+    @Override
+    public void updateSaldo(long numeroCuenta, double nuevoSaldo) {
+        Cuenta cuenta = find(numeroCuenta, false);
+        if (cuenta != null) {
+            cuenta.setSaldo(nuevoSaldo);
+            save(cuenta);
+        }
+    }
+
     public void update(Cuenta cuenta) {
         CuentaEntity cuentaEntity = new CuentaEntity(cuenta);
         getInMemoryDataBase().put(cuenta.getNumeroCuenta(), cuentaEntity);

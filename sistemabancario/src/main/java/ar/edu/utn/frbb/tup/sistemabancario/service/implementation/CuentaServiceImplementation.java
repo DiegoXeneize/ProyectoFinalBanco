@@ -43,20 +43,55 @@ public class CuentaServiceImplementation implements CuentaService {
         return cuentasDelCliente;
     }
 
+    @Override
+    public double depositar(long numeroCuenta, double monto) throws CuentaNoEncontradaException, IllegalArgumentException {
+        if (monto <= 0) {
+            throw new IllegalArgumentException("El monto a depositar debe ser mayor a 0.");
+        }
+
+        Cuenta cuenta = cuentaDao.find(numeroCuenta, true);
+        if (cuenta == null) {
+            throw new CuentaNoEncontradaException("No existe cuenta con el número " + numeroCuenta);
+        }
+
+        cuenta.setSaldo(cuenta.getSaldo() + monto);
+        cuentaDao.save(cuenta);
+        return cuenta.getSaldo();
+    }
+
+    @Override
+    public void actualizarSaldo(long numeroCuenta, double nuevoSaldo) throws CuentaNoEncontradaException {
+        Cuenta cuenta = cuentaDao.find(numeroCuenta, false);
+        if (cuenta == null) {
+            throw new CuentaNoEncontradaException("No existe cuenta con número " + numeroCuenta);
+        }
+
+        cuentaDao.updateSaldo(numeroCuenta, nuevoSaldo);
+    }
+
+    @Override
+    public Cuenta buscarCuentaPorNumero(long numeroCuenta) throws CuentaNoEncontradaException {
+        Cuenta cuenta = cuentaDao.find(numeroCuenta, true);
+        if (cuenta == null) {
+            throw new CuentaNoEncontradaException("No existe cuenta con número " + numeroCuenta);
+        }
+        return cuenta;
+    }
+
+    @Override
+    public boolean tieneSaldoDisponible(Cuenta cuenta, double montoCuota) {
+        return cuenta.getSaldo() >= montoCuota;
+    }
+
+
+
+
     public void actualizarTitularCuenta(Cliente clienteActualizado, long dniAntiguo) throws CuentaNoEncontradaException {
         List<Cuenta> cuentasByCliente = listCuentasByCliente(dniAntiguo);
         for (Cuenta c : cuentasByCliente){
             c.setTitular(clienteActualizado);
             cuentaDao.save(c);
         }
-    }
-
-    public Cuenta buscarCuentaPorNumero(long numeroCuenta) throws CuentaNoEncontradaException {
-        Cuenta cuenta = cuentaDao.find(numeroCuenta, true);
-        if(cuenta == null){
-            throw new CuentaNoEncontradaException("No existe cuenta con número " + numeroCuenta);
-        }
-        return cuenta;
     }
 
 
@@ -76,10 +111,6 @@ public class CuentaServiceImplementation implements CuentaService {
            }
         }
         return false;
-    }
-
-    public boolean tieneSaldoDisponible(Cuenta cuenta, double montoCuota) {
-        return cuenta.getSaldo() >= montoCuota;
     }
 
 

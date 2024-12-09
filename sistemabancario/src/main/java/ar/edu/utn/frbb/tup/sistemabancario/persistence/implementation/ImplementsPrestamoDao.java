@@ -21,6 +21,7 @@ public class ImplementsPrestamoDao extends AbstractDataBase implements PrestamoD
         getInMemoryDataBase().put(prestamo.getId(), prestamo);
     }
 
+    @Override
     public Prestamo find(long id) {
         return (Prestamo) getInMemoryDataBase().get(id);
     }
@@ -28,13 +29,11 @@ public class ImplementsPrestamoDao extends AbstractDataBase implements PrestamoD
     @Override
     public List<Prestamo> findAllByCliente(long numeroCliente) {
         List<Prestamo> prestamosCliente = new ArrayList<>();
-
         for (Object prestamo : getInMemoryDataBase().values()) {
             if (prestamo instanceof Prestamo && ((Prestamo) prestamo).getNumeroCliente() == numeroCliente) {
                 prestamosCliente.add((Prestamo) prestamo);
             }
         }
-
         return prestamosCliente;
     }
 }

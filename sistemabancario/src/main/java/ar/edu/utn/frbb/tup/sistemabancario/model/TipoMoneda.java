@@ -2,8 +2,8 @@ package ar.edu.utn.frbb.tup.sistemabancario.model;
 
 
 public enum TipoMoneda {
-    ARS("pesos"),
-    USD("dolares");
+    ARS("ARS"),
+    USD("USD");
 
     private final String text;
 

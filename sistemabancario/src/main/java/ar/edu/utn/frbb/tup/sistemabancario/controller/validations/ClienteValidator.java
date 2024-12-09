@@ -12,12 +12,11 @@ import java.time.format.DateTimeParseException;
 public class ClienteValidator {
 
     public void validate(ClienteDto clienteDto){
-        // -- Valida que el clienteDto no sea nulo --
+
         if(clienteDto == null){
             throw new IllegalArgumentException("El cliente no puede ser nulo");
         }
 
-        // -- Validamos el tipo de persona --
         String tipoPersona = clienteDto.getTipoPersona();
         if (tipoPersona == null || tipoPersona.isEmpty()) {
             throw new IllegalArgumentException("El tipo de persona no puede ser nulo o vacío");
@@ -29,8 +28,7 @@ public class ClienteValidator {
         if (!"F".equals(tipoPersona) && !"J".equals(tipoPersona)) {
             throw new IllegalArgumentException("El tipo de persona debe ser 'F' o 'J'");
         }
-
-        // -- Validamos la fecha de nacimiento --
+        
         String fechaNacimiento = clienteDto.getFechaNacimiento();
         if (fechaNacimiento == null || fechaNacimiento.isEmpty()) {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser nula o vacía");

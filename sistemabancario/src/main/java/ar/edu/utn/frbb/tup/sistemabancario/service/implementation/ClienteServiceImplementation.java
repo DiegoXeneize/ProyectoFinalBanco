@@ -21,7 +21,6 @@ public class ClienteServiceImplementation implements ClienteService {
     CuentaServiceImplementation cuentaService;
 
 
-    // -- Funcion que da de alta un cliente --
     @Override
     public void darAltaCliente(ClienteDto clienteDto) throws ClienteAlreadyExistsException, MenorEdadException {
         Cliente cliente = new Cliente(clienteDto);
@@ -37,7 +36,6 @@ public class ClienteServiceImplementation implements ClienteService {
         clienteDao.save(cliente);
     }
 
-    // -- Funcion que busca un cliente por dni --
     @Override
     public Cliente buscarClientePorDni(long dni) throws ClienteNoExistsException {
         Cliente cliente = clienteDao.find(dni, true);
@@ -47,7 +45,6 @@ public class ClienteServiceImplementation implements ClienteService {
         return cliente;
     }
 
-    // -- Funcion que actualiza un cliente --
     @Override
     public void updateCliente(ClienteDto clienteDto, long dniAntiguo) throws ClienteNoExistsException, MenorEdadException, CuentaNoEncontradaException {
 
@@ -70,7 +67,6 @@ public class ClienteServiceImplementation implements ClienteService {
 
     }
 
-    // -- Funcion que agrega una cuenta a un cliente --
     @Override
     public void agregarCuentasAlCliente(Cuenta cuenta, long dni) throws TipoCuentaAlreadyExistsException, ClienteNoExistsException {
         Cliente cliente = buscarClientePorDni(dni);

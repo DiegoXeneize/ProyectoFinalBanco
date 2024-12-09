@@ -32,6 +32,9 @@ public class PrestamoServiceImplementation implements PrestamoService {
     @Autowired
     private CuentaService cuentaService;
 
+    @Autowired
+    private CreditRatingService creditRatingService;
+
     private static long prestamoIdCounter = 1;
 
     private long generateUniquePrestamoId() {
@@ -49,6 +52,10 @@ public class PrestamoServiceImplementation implements PrestamoService {
         Cuenta cuenta = cuentaService.obtenerCuentaParaPrestamo(prestamoDto.getNumeroCliente(), TipoMoneda.valueOf(prestamoDto.getMoneda().toUpperCase()));
         if (cuenta == null) {
             throw new CuentaNoEncontradaException("El cliente no tiene una cuenta en la moneda especificada.");
+        }
+
+        if (!creditRatingService.tieneBuenHistorialCrediticio(prestamoDto.getNumeroCliente())) {
+            throw new PrestamoException("El cliente con DNI " + prestamoDto.getNumeroCliente() + " no tiene buen historial crediticio.");
         }
 
         if (prestamoDto.getPlazoMeses() < 1) {
@@ -78,7 +85,7 @@ public class PrestamoServiceImplementation implements PrestamoService {
         return response;
     }
 
-        @Override
+    @Override
     public PrestamosClienteResponseDto obtenerPrestamosDeCliente(long numeroCliente) throws ClienteNoExistsException {
 
         Cliente cliente = clienteService.buscarClientePorDni(numeroCliente);
@@ -115,6 +122,14 @@ public class PrestamoServiceImplementation implements PrestamoService {
             throw new PrestamoNoEncontradoException("El préstamo con número " + pagoCuotaDto.getNumeroPrestamo() + " no existe.");
         }
 
+        if (prestamo.getSaldoRestante() <= 0) {
+            throw new IllegalArgumentException("El préstamo con número " + pagoCuotaDto.getNumeroPrestamo() + " ya está saldado.");
+        }
+
+        if (pagoCuotaDto.getCantidadCuotas() <= 0) {
+            throw new IllegalArgumentException("La cantidad de cuotas a pagar debe ser mayor que 0.");
+        }
+
         int cuotasRestantes = prestamo.getPlazoMeses() - prestamo.getPagosRealizados();
         if (pagoCuotaDto.getCantidadCuotas() > cuotasRestantes) {
             throw new IllegalArgumentException("El número de cuotas excede las cuotas restantes del préstamo.");
@@ -127,17 +142,43 @@ public class PrestamoServiceImplementation implements PrestamoService {
             throw new IllegalArgumentException("El monto proporcionado no es suficiente para pagar las cuotas seleccionadas. Monto requerido: " + montoTotalPago);
         }
 
+        long numeroCliente = prestamo.getNumeroCliente();
+
+        List<Cuenta> cuentasCliente = cuentaService.listCuentasByCliente(numeroCliente);
+        if (cuentasCliente.isEmpty()) {
+            throw new IllegalArgumentException("El cliente con número " + numeroCliente + " no tiene cuentas asociadas.");
+        }
+
+        Cuenta cuentaSeleccionada = null;
+        for (Cuenta cuenta : cuentasCliente) {
+            if (cuenta.getTipoMoneda().getText().equalsIgnoreCase(prestamo.getMoneda())) {
+                cuentaSeleccionada = cuenta;
+                break;
+            }
+        }
+
+        if (cuentaSeleccionada == null) {
+            throw new IllegalArgumentException("El cliente no tiene una cuenta en la moneda requerida (" + prestamo.getMoneda() + ").");
+        }
+
+        if (!cuentaService.tieneSaldoDisponible(cuentaSeleccionada, montoTotalPago)) {
+            throw new IllegalArgumentException("No tiene suficiente saldo en su cuenta para realizar este pago.");
+        }
+
         prestamo.setPagosRealizados(prestamo.getPagosRealizados() + pagoCuotaDto.getCantidadCuotas());
         prestamo.setSaldoRestante(prestamo.getSaldoRestante() - montoTotalPago);
         prestamoDao.save(prestamo);
-        
+
+        cuentaService.actualizarSaldo(cuentaSeleccionada.getNumeroCuenta(), cuentaSeleccionada.getSaldo() - montoTotalPago);
+
         PagoCuotaResponseDto response = new PagoCuotaResponseDto();
         response.setNumeroPrestamo(prestamo.getId());
         response.setEstado("COMPLETADO");
-        response.setMensaje("El pago de " + pagoCuotaDto.getCantidadCuotas() + " cuota(s) fue registrado exitosamente.");
+        response.setMensaje("El pago de " + pagoCuotaDto.getCantidadCuotas() + " cuota(s) fue registrado exitosamente. Saldo restante: " + prestamo.getSaldoRestante());
 
         return response;
     }
+
 
 
 

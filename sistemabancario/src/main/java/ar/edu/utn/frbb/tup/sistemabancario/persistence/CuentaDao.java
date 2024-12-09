@@ -9,5 +9,6 @@ public interface CuentaDao {
     Cuenta find(long id, boolean cargarMovimientos);
     void save(Cuenta cuenta);
     List<Cuenta> cuentasDelCliente(long dni);
+    void updateSaldo(long numeroCuenta, double nuevoSaldo);
 
 }

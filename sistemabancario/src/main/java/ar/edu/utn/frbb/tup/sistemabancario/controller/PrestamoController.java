@@ -32,10 +32,10 @@ public class PrestamoController {
         return ResponseEntity.ok(prestamoService.solicitarPrestamo(prestamoDto));
     }
 
-    @GetMapping("/{numeroCliente}")
-    public ResponseEntity<PrestamosClienteResponseDto> obtenerPrestamos(@PathVariable long numeroCliente) {
-        validationInput.validarDni(numeroCliente);
-        return ResponseEntity.ok(prestamoService.obtenerPrestamosDeCliente(numeroCliente));
+    @GetMapping("/{dniCliente}")
+    public ResponseEntity<PrestamosClienteResponseDto> obtenerPrestamos(@PathVariable long dniCliente) {
+        validationInput.validarDni(dniCliente);
+        return ResponseEntity.ok(prestamoService.obtenerPrestamosDeCliente(dniCliente));
     }
 
     @PostMapping("/pagar")

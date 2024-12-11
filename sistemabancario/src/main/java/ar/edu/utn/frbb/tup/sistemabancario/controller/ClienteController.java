@@ -29,7 +29,7 @@ public class ClienteController {
     private ValidationInput validationInput;
 
     
-    @PostMapping("/alta")
+    @PostMapping()
     public ResponseEntity<Object> crearCliente(@RequestBody ClienteDto clienteDto, WebRequest request) throws ClienteAlreadyExistsException, MenorEdadException {
         validationInput.validarInputCliente(clienteDto);
         clienteService.darAltaCliente(clienteDto);
@@ -42,7 +42,7 @@ public class ClienteController {
         return clienteService.buscarClientePorDni(Id);
     }
 
-    @PutMapping("/update/{dni}")
+    @PutMapping("/{dni}")
     public ResponseEntity<Object> updateCliente(@PathVariable long dni, @RequestBody ClienteDto clienteDto, WebRequest request) throws ClienteNoExistsException, MenorEdadException, CuentaNoEncontradaException {
         clienteService.updateCliente(clienteDto, dni);
         return  ResponseEntity.ok("Cliente modificado con exito");

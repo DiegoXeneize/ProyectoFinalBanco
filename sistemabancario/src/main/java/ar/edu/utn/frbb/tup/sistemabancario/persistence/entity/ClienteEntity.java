@@ -69,4 +69,8 @@ public class ClienteEntity extends BaseEntity {
     public Set<Long> getCuentasDelCliente() {
         return cuentasDelCliente;
     }
+
+    public String getBanco() {
+        return banco;
+    }
 }

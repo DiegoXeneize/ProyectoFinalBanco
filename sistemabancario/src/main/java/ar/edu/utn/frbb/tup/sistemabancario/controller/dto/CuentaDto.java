@@ -6,6 +6,8 @@ public class CuentaDto {
     private String tipoMoneda;
     private String tipoCuenta;
 
+    
+
     public long getDniTitular() {
         return dniTitular;
     }

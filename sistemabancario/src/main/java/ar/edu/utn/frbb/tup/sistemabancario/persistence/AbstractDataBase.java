@@ -8,7 +8,7 @@ public abstract class AbstractDataBase {
     protected abstract String getEntityName();
     protected static Map<String, Map<Long, Object>> mapa = new HashMap<>();
 
-    protected Map<Long, Object> getInMemoryDataBase(){
+    public Map<Long, Object> getInMemoryDataBase(){
         if(mapa.get(getEntityName()) == null){
             mapa.put(getEntityName(), new HashMap<>());
         }

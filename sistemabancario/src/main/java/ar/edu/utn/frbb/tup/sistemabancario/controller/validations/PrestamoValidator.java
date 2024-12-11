@@ -1,7 +1,6 @@
 package ar.edu.utn.frbb.tup.sistemabancario.controller.validations;
 
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.PrestamoDto;
-import ar.edu.utn.frbb.tup.sistemabancario.model.Prestamo;
 
 public class PrestamoValidator {
     public void validatePrestamo(PrestamoDto prestamoDto) {

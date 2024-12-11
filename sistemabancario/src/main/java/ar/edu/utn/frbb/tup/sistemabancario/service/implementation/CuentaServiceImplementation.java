@@ -106,9 +106,9 @@ public class CuentaServiceImplementation implements CuentaService {
     public boolean tieneCuentaDeTipoMoneda(long numeroCliente, TipoMoneda moneda, TipoCuenta tipoCuenta){
         List<Cuenta> cuentasDelCliente = cuentaDao.cuentasDelCliente(numeroCliente);
         for (Cuenta c : cuentasDelCliente){
-           if(c.getTipoMoneda().equals(moneda) && c.getTipoCuenta().equals(tipoCuenta)){
-               return true;
-           }
+            if(c.getTipoMoneda().equals(moneda) && c.getTipoCuenta().equals(tipoCuenta)){
+                return true;
+            }
         }
         return false;
     }

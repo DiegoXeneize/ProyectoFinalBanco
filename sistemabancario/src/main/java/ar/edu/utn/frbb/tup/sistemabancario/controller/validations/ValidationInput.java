@@ -2,7 +2,6 @@ package ar.edu.utn.frbb.tup.sistemabancario.controller.validations;
 
 import ar.edu.utn.frbb.tup.sistemabancario.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.sistemabancario.controller.exceptions.NotFormatDateException;
-import ar.edu.utn.frbb.tup.sistemabancario.model.exception.CantidadNegativaException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ import java.time.format.DateTimeParseException;
 @Component
 public class ValidationInput {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public void validarInputCliente(ClienteDto clienteDto){
 
@@ -24,7 +23,7 @@ public class ValidationInput {
         validarString(clienteDto.getApellido(), "apellido", 3);
     }
 
-    private void validarFechaNacimiento(String fechaNacimientoStr){
+    public void validarFechaNacimiento(String fechaNacimientoStr){
         try{
             LocalDate fechaNacimiento = LocalDate.parse(fechaNacimientoStr, DATE_FORMATTER);
             LocalDate fechaActual = LocalDate.now();
@@ -39,7 +38,7 @@ public class ValidationInput {
         }
     }
 
-    private void validarString(String texto, String campo, int longMinima){
+    public void validarString(String texto, String campo, int longMinima){
 
         if(texto == null || texto.length() <= longMinima){
             throw new IllegalArgumentException("El campo " + campo + " no puede ser nulo y debe contener al menos " + longMinima + " caracteres");
